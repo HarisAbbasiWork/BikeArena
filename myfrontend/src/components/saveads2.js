@@ -3,6 +3,8 @@ import {UserContext} from './UserContext'
 import axios from 'axios'
 import {withRouter, useHistory} from "react-router-dom";
 import './mycss.css'
+import {ArrowUpRightSquareFill,SaveFill, Save, EyeFill, Calendar2MinusFill, Bezier } from 'react-bootstrap-icons';
+
 function Saveads2({handleEdit,handleDelete,job, removead}) {
     const value12 = useContext(UserContext);
     let history = useHistory();
@@ -14,24 +16,30 @@ function Saveads2({handleEdit,handleDelete,job, removead}) {
     
     return (
         <div class="jumbotron jumbotron-fluid">
-            <img style={{position:"absolute", left:'1%'}} width="100" height="100" src={'/content/'+job.adimg}  ></img>
+            
                 <div class="container">
-                    {job.useremail===value12.email2?<button onClick={()=>{handleEdit(job._id)}} style={{float:'right'}} type="button" class="btn btn-success">Edit</button>:null}
-                    {job.useremail===value12.email2?<button onClick={()=>{handleDelete(job._id)}} style={{float:'right'}} type="button" class="btn btn-danger">Delete Ad</button>:null}
-                    {value12.isadmin==="true"?<button onClick={()=>{handleDelete(job._id)}} style={{float:'right'}} type="button" class="btn btn-danger">Delete Ad As Admin</button>:null}
-                    <h3 id="ccc2" onClick={()=>{openad(job._id)}}>Ad Title: {job.adtitle}</h3>
-                    <a style={{fontSize:"13px"}}>{job.date}</a>
+                {value12.isadmin==="true"?<button onClick={()=>{handleDelete(job._id)}} style={{float:'right'}} type="button" class="btn btn-danger">Delete Ad As Admin</button>:null}
+                    <h3 id="ccc2"  >{job.adtitle}</h3>
+                    
                     
                     
                     <br></br>
-                    <a><strong>Ad Description:</strong> {job.addescription}</a><br></br>
-                    {job.Category==='Bike'?<a id="forpadding"><strong>Brand:</strong> {job.brand}</a>:<a id="forpadding"><strong>Bike Part:</strong> {job.BikePart}</a>}
-                    {job.Category==='Bike'?<a id="forpadding"><strong>Mileage:</strong> {job.Mileage}</a>:null}
-                    {job.Category==='Bike'?<a id="forpadding"><strong>Model Year:</strong> {job.Model}</a>:null}
+                    {/*<a><strong>Ad Description:</strong> {job.addescription}</a><br></br>*/}
+                    {job.Category==='Bike'?<a id="forpadding" style={{marginLeft:'18%'}}><strong></strong><Bezier /> {job.brand}</a>:<a id="forpadding"><strong>Bike Part:</strong> {job.BikePart}</a>}
+                    {job.Category==='Bike'?<a id="forpadding"><strong><Calendar2MinusFill /> </strong> {job.Model}</a>:null}
                     <a id="forpadding"><strong>Condition:</strong> {job.condition}</a>
-                    <a id="forpadding2"><strong>Price:</strong> RS. {job.price}</a><br></br>
-                    <a style={{size:'12px'}} > Posted by <a href='#' onClick={()=>{history.push('/profile/'+job.userid);}}>{job.username}</a></a>
-                    <button onClick={()=>{removead(job._id)}} style={{float:'right'}} type="button" class="btn btn-success">Remove From Saved Ads</button>
+                    
+                    
+                    
+                    <br></br>
+                    <a style={{size:'12px'}} ><a href={'/profile/'+job.userid}>{job.username}</a></a><a style={{fontSize:"13px", marginLeft:'2%'}}>{job.date}</a>
+                    <div style={{backgroundColor:'#fff591', width:'25%', textAlign:'center', float:'right'}}><a id="forpadding2"><strong></strong> RS. {job.price}</a><br></br></div>
+                    
+                    <button onClick={()=>{openad(job._id)}}style={{ marginTop:"2%", width:'100%'}} type="button" class="btn btn-success"><EyeFill/> View Ad</button>
+                    {job.useremail===value12.email2?<button onClick={()=>{handleEdit(job._id)}} style={{marginTop:"2%", width:'100%'}} type="button" class="btn btn-success">Edit</button>:null}
+                    {job.useremail===value12.email2?<button onClick={()=>{handleDelete(job._id)}} style={{marginTop:"2%", width:'100%'}} type="button" class="btn btn-danger">Delete Ad</button>:null}
+                    
+                    <button onClick={()=>{removead(job._id)}} style={{marginTop:"2%", width:'100%'}} type="button" class="btn btn-success">Remove From Saved Ads</button>
                     
                     
                 </div>

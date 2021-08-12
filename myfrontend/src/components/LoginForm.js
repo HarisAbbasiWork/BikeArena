@@ -2,8 +2,7 @@ import React, {useState,useEffect, useMemo} from 'react'
 import { withRouter, useHistory } from 'react-router-dom'; 
 import axios from 'axios'
 import NavBar from './NavBar'
-import FacebookLogin from 'react-facebook-login';
-function LoginForm({props,setFavs,setFollowing, setEmail2,setUserid, setUser2, user2, setIslogged }) {
+function LoginForm({props,setType, setFavs,setCart,setFollowing, setEmail2,setUserid, setUser2, user2, setIslogged }) {
     const [email, setEmail] = useState("Profile")
     const [pass, setPass] = useState("")
     const [error, setError] = useState(null);
@@ -44,8 +43,11 @@ function LoginForm({props,setFavs,setFollowing, setEmail2,setUserid, setUser2, u
             setUserid(response.data.id)
             setFavs(response.data.favs)
             setFollowing(response.data.following)
+            setType(response.data.type)
+            setCart(response.data.cart)
             console.log("Favs are: ",response.data.favs)
             setIslogged("true")
+            localStorage.setItem('data', JSON.stringify(response.data))
             console.log("We know evertything now after submission", email)
             history.push('/');
 

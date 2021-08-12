@@ -22,6 +22,7 @@ function Profile({email2}) {
     const [address, setAddress] = useState("")
     const [proficpic, setProficpic] = useState("")
     const [showWhich, setShowWhich] = useState("profile")
+    const [profileID, setProfileID] = useState("")
     const [profilestatus, setProfilestatus] = useState("Not Anything")
     const getFF=(id)=>{
         axios.get('http://localhost:5000/'+id)
@@ -51,6 +52,7 @@ function Profile({email2}) {
                 setProficpic(response.data.propic)
                 setFollowers(response.data.followers)
                 setFollowing(response.data.following)
+                setProfileID(response.data._id)
                 if(value12.email2==="Login"){
                     setProfilestatus('')
                 }else{
@@ -162,6 +164,37 @@ function Profile({email2}) {
           setBanned(true)
 
     }
+    const getConversation=()=>{
+        console.log(params.id," ",value12.userid)
+        axios.get('http://localhost:5000/getConversation/'+params.id+'/'+value12.userid)
+            .then(response => {
+                console.log("Converation data: ",response.data)
+                if(response.data){
+                    history.push('/conversation/'+response.data._id)
+                }else{
+                    const converInfo={
+                        receiverId: value12.userid,
+                        senderId:profileID
+                    }
+                    axios.post('/newConversation', converInfo)
+                      .then(function (response) {
+                          console.log(response.data)
+                          history.push('/conversation/'+response.data._id)
+                          
+                      })
+                      .catch(function (error) {
+                        console.log('Error is ',error);
+                      });
+                }
+                
+                
+            })
+            .catch(function (error){
+                console.log(error);
+                console.log("Aey te error hai bro")
+            })
+            
+    }
     const handleUnBan=(id)=>{
         console.log("fuckkk",id)
         axios.post('/unbanuser', {
@@ -210,6 +243,7 @@ function Profile({email2}) {
             :profilestatus==="Following"?
             <div id="ccc" onClick={handleClick}><div id="confirm2">Unfollow</div></div>
             :null}
+            {value12.email2==="Login"||profilestatus==="My Profile"?null:<Button onClick={()=>getConversation()} style={{marginLeft:'47%',backgroundColor: '#11204D', marginTop:'2%' }}>Message </Button>}
             {value12.isadmin==="true"?<div id="ccc3"><button style={{marginTop:"20px"}}onClick={()=>{handleBan(email)}}  type="button" class="btn btn-danger">Ban User As Admin</button></div>:null}
             
             <br/>
@@ -234,7 +268,7 @@ function Profile({email2}) {
                 ))
             :null}
             {showWhich==="myads"
-            ?<Showprofileads email={email} />
+            ?<Showprofileads email={email} name={name} />
             :null}
             
         </div>

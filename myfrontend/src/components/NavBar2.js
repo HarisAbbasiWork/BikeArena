@@ -11,7 +11,7 @@ import { ArrowRight,PersonFill,ArrowUpRightSquareFill, UnlockFill, BoxArrowInRig
 import './fullcss.css'
 import {NavItem, NavDropdown} from 'react-bootstrap'
 import { BrowserRouter as Router, Switch, Route, Link,withRouter, useHistory } from "react-router-dom";
-function NavBar2({islogged,user3, user2, logout,setIsadmin, userid,isadmin}) {
+function NavBar2({type,islogged,user3, user2, logout,setIsadmin, userid,isadmin}) {
     
   const [isOpen, updateIsOpen] = useState(false);
   const [isOpen2, updateIsOpen2] = useState(false);
@@ -92,12 +92,18 @@ function NavBar2({islogged,user3, user2, logout,setIsadmin, userid,isadmin}) {
                     {BikeParts.map(part=>(<NavDropdown.Item onClick={()=>onClickPart(part)} className="nav-items" eventKey="4.1" >{part}</NavDropdown.Item>
                     ))}
                   </NavDropdown>
+                  <Nav>
+                  <Nav.Link style={{color: 'white'}} to="/browsemechanics" href="/browsemechanics">Browse Mechanics</Nav.Link>
+                  </Nav>
                   {islogged==="true" 
-                  ? <Nav style={{}} className="mr-auto">
+                  ? type=="Mechanic"?null: <Nav style={{}} className="mr-auto">
                     <Nav.Link style={{color: 'white'}} onClick={opensavedads}>Saved Ads</Nav.Link>
                     </Nav>
-                  :isadmin==="true"?null:<Nav style={{marginLeft:'43.5%'}}>
-                  <Nav.Link style={{color: 'white'}} to="/sign-up" href="/sign-up"><UnlockFill/> Signup</Nav.Link>
+                  :isadmin==="true"?null:<Nav style={{marginLeft:'0%'}}>
+                    <Nav.Link style={{color: 'white'}} to="/mechanicsign-up" href="/mechanicsign-up"><UnlockFill/> Register As Mechanic </Nav.Link>
+                    <Nav.Link style={{color: 'white'}} to="/mechanicsign-in" href="/mechanicsign-in"><BoxArrowInRight/> Signin As Mechanic</Nav.Link>
+                    <Nav.Link style={{color: 'white'}} to="/sign-up" href="/sign-up"><UnlockFill/> Signup</Nav.Link>
+                  
                   </Nav>
                   }
                   
@@ -108,8 +114,10 @@ function NavBar2({islogged,user3, user2, logout,setIsadmin, userid,isadmin}) {
                     {islogged==="true"?<PersonFill style={{marginTop:"5.5%"}} color="white" />:null}
                     {islogged==="true"
                     ?<NavDropdown style={{color: 'white', fontWeight: 'bold'}} title={user2} id="nav-dropdown">
-                    <NavDropdown.Item eventKey="4.1" className="nav-items" onClick={openProfile}>Profile</NavDropdown.Item>
-                    <NavDropdown.Item eventKey="4.2" className="nav-items" onClick={openSettings}>Account Setting</NavDropdown.Item>
+                      <NavDropdown.Item eventKey="4.1" className="nav-items" href={'/mycart'}>Cart</NavDropdown.Item>
+                      <NavDropdown.Item eventKey="4.1" className="nav-items" onClick={openProfile}>Profile</NavDropdown.Item>
+                      <NavDropdown.Item eventKey="4.1" className="nav-items" href={'/messages'}>Messages</NavDropdown.Item>
+                      <NavDropdown.Item eventKey="4.2" className="nav-items" onClick={openSettings}>Account Setting</NavDropdown.Item>
                     
                     </NavDropdown>
                     :null}

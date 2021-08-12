@@ -1,63 +1,138 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+
 const express = require('express')
-var request =require('request')
 const app = express()
-var nodemailer = require("nodemailer");
 
 
-const bcrypt = require("bcrypt")
-import db from './config/dbconfig.js'
+const db = require('./config/dbconfig.js')
 var bodyParser = require('body-parser')
-const saltRounds = 10;
 const port = 5000
-const vari = "haris"
 var cors = require('cors')
-var url = "mongodb://localhost:27017/Jobweb";
 app.use(cors())
  
  // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
-const multer = require('multer')
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, '../myfrontend/public/content')
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + '-' +file.originalname)
-  }
-})
-
-const upload = multer({ storage: storage }).array('file');
 // parse application/json
 app.use(bodyParser.json()) 
-var ObjectId = require('mongodb').ObjectID;
+var adminroutes1 = require('./routes/adminroutes');
+var userroutes1 = require('./routes/userroutes');
+var adsroutes1 = require('./routes/adsroutes');
+var mechanicroutes1 = require('./routes/mechanicroutes');
+var conversationroutes1 = require('./routes/conversationroutes');
+app.use(adsroutes1);
+app.use(userroutes1);
+app.use(adminroutes1)
+app.use(mechanicroutes1)
+app.use(conversationroutes1)
 
-app.post('/deletead', function(req,res){
-  console.log("we deleting")
-  console.log(req.body.id)
-  db.collection('ads').findOneAndDelete({'_id': ObjectId(req.body.id)}, function(err, obj) {
-    if (err) throw err;
-    console.log("1 document deleted");
-  });
+//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//
+/*
+app.post('/unbanuser', function(req,res){
+  console.log("User email:",req.body.useremail)
+  db.collection('details').findOne({"email": req.body.useremail}, function(err, creden) {
+    console.log("isbanned? ",creden.isbanned)
+    var newban=false
+    
+    const query = {"email": req.body.useremail}
+
+    const update = {
+      "$set": {
+        "isbanned": newban,
+        
+      }
+    };
+    db.collection('details').findOneAndUpdate(query,update)
+    return res.send({
+      success: true,
+      message: 'Congrats',
+      
+    });
+});
 })
+app.post('/banuser', function(req,res){
+  console.log(req.body.useremail)
+  db.collection('details').findOne({"email": req.body.useremail}, function(err, creden) {
+    console.log("isbanned? ",creden.isbanned)
+    var newban=true
+    
+    const query = {"email": req.body.useremail}
 
-app.get('/getufavs/:email',function(req,res){
-  console.log("get saved ads of: ",req.params.email)
-  db.collection('details').findOne({"email": req.params.email}, function(err, creden) {
+    const update = {
+      "$set": {
+        "isbanned": newban,
+        
+      }
+    };
+    db.collection('details').findOneAndUpdate(query,update)
+    return res.send({
+      success: true,
+      message: 'Congrats',
+      
+    });
+});
+})
+app.post('/removesavead', function(req,res){
+  console.log("ID: ",req.body.id)
+  console.log("Useremail: ",req.body.useremail)
+  db.collection('details').findOne({"email": req.body.useremail}, function(err, creden) {
     console.log("creden Found",creden.favs)
     var favs1=creden.favs
-    res.send(favs1)
-  })
+    favs1 = favs1.filter(e => e !== req.body.id);
+    console.log("updated favs of "+favs1)
+    const query = {"email": req.body.useremail}
 
+    const update = {
+      "$set": {
+        "favs": favs1,
+        
+      }
+    };
+    db.collection('details').findOneAndUpdate(query,update)
+     console.log("Adddeleted")
+     return res.send({
+      message: 'Deleted',
+      favs1:favs1
+    });
+});
+})
+//
+app.get('/getjobs/:email', function(req,res){
+  let email = req.params.email;
+  console.log(email)
+  db.collection('ads').find({"useremail":email}).toArray(function(err, ads) {
+    if (err) {
+        console.log("Error mongo main hai")
+        console.log(err);
+    } else {
+        res.json(ads);
+        console.log("Sent ads to frontend", ads)
+    }
+});
 
 })
-app.post('/getuserIDName', function(req,res){
-  console.log(" profile email: ", req.body.email)
-  db.collection('details').findOne({"email": req.body.email}, function(err, profile) {
-    console.log("profile Found",profile)
-    res.json(profile)
+//
+app.get('/ad/:id', function(req,res){
+  let id = req.params.id;
+  db.collection('ads').findOne({"_id": ObjectId(req.params.id)}, function(err, ad) {
+    console.log("ad Found",ad)
+    res.json(ad)
 });
 
 })
@@ -172,10 +247,36 @@ app.post('/updatejob',upload, function (req, res) {
 
   
 });
+app.get('/getufavs/:email',function(req,res){
+  console.log("get saved ads of: ",req.params.email)
+  db.collection('details').findOne({"email": req.params.email}, function(err, creden) {
+    console.log("creden Found",creden.favs)
+    var favs1=creden.favs
+    res.send(favs1)
+  })
+
+
+})
+app.get('/getusers', function(req,res){
+  db.collection('details').find({}).toArray(function(err, users) {
+    if (err) {
+        console.log("Error mongo main hai")
+        console.log(err);
+    } else {
+        res.json(users);
+        console.log("Sent users to frontend", users)
+    }
+});
+
+})
 app.post('/imgupload',upload, function(req,res){
   console.log(req.body);
   
   console.log(req.files[0].filename);
+  console.log(req.files[1].filename);
+  console.log(req.files[2].filename);
+  console.log(req.files[3].filename);
+  console.log(req.files[4].filename);
   
   var isntvideo=true
   console.log(req.files.length);
@@ -202,7 +303,11 @@ app.post('/imgupload',upload, function(req,res){
           "brand": bikelements.brand,
           "Mileage": bikelements.Mileage,
           "condition": bikelements.condition,
+          "city": bikelements.city,
           "adimg": req.files[0].filename,
+          "adimg2": req.files[3].filename,
+          "adimg3": req.files[4].filename,
+          "adimg4": req.files[5].filename,
           "advideo": req.files[1].filename,
           "price": parseInt(bikelements.price),
           "date": bikelements.date
@@ -221,7 +326,11 @@ app.post('/imgupload',upload, function(req,res){
           "userid": bikelements.userid,
           "BikePart": bikelements.BikePart,
           "condition": bikelements.condition,
+          "city": bikelements.city,
           "adimg": req.files[0].filename,
+          "adimg2": req.files[3].filename,
+          "adimg3": req.files[4].filename,
+          "adimg4": req.files[5].filename,
           "advideo": req.files[1].filename,
           "price": parseInt(bikelements.price),
           "date": bikelements.date
@@ -244,7 +353,11 @@ app.post('/imgupload',upload, function(req,res){
         "brand": bikelements.brand,
         "Mileage": bikelements.Mileage,
         "condition": bikelements.condition,
+        "city": bikelements.city,
         "adimg": req.files[0].filename,
+        "adimg2": req.files[3].filename,
+        "adimg3": req.files[4].filename,
+        "adimg4": req.files[5].filename,
         "price": parseInt(bikelements.price),
         "date": bikelements.date
         
@@ -262,7 +375,11 @@ app.post('/imgupload',upload, function(req,res){
         "userid": bikelements.userid,
         "BikePart": bikelements.BikePart,
         "condition": bikelements.condition,
+        "city": bikelements.city,
         "adimg": req.files[0].filename,
+        "adimg2": req.files[3].filename,
+        "adimg3": req.files[4].filename,
+        "adimg4": req.files[5].filename,
         "price": bikelements.price,
         "date": bikelements.date
         
@@ -287,41 +404,13 @@ app.post('/imgupload',upload, function(req,res){
   
   
 })
-app.post('/removesavead', function(req,res){
-  console.log("ID: ",req.body.id)
-  console.log("Useremail: ",req.body.useremail)
-  db.collection('details').findOne({"email": req.body.useremail}, function(err, creden) {
-    console.log("creden Found",creden.favs)
-    var favs1=creden.favs
-    favs1 = favs1.filter(e => e !== req.body.id);
-    console.log("updated favs of "+favs1)
-    const query = {"email": req.body.useremail}
-
-    const update = {
-      "$set": {
-        "favs": favs1,
-        
-      }
-    };
-    db.collection('details').findOneAndUpdate(query,update)
-     console.log("Adddeleted")
-     return res.send({
-      message: 'Deleted',
-      favs1:favs1
-    });
-});
-})
-app.get('/getusers', function(req,res){
-  db.collection('details').find({}).toArray(function(err, users) {
-    if (err) {
-        console.log("Error mongo main hai")
-        console.log(err);
-    } else {
-        res.json(users);
-        console.log("Sent users to frontend", users)
-    }
-});
-
+app.post('/deletead', function(req,res){
+  console.log("we deleting")
+  console.log(req.body.id)
+  db.collection('ads').findOneAndDelete({'_id': ObjectId(req.body.id)}, function(err, obj) {
+    if (err) throw err;
+    console.log("1 document deleted");
+  });
 })
 app.get('/getjobs', function(req,res){
   db.collection('ads').find({}).toArray(function(err, ads) {
@@ -333,45 +422,6 @@ app.get('/getjobs', function(req,res){
         res.json(ads2);
         console.log("Sent jobs to frontend", ads)
     }
-});
-
-})
-app.get('/getjobs/:email', function(req,res){
-  let email = req.params.email;
-  console.log(email)
-  db.collection('ads').find({"useremail":email}).toArray(function(err, ads) {
-    if (err) {
-        console.log("Error mongo main hai")
-        console.log(err);
-    } else {
-        res.json(ads);
-        console.log("Sent ads to frontend", ads)
-    }
-});
-
-})
-app.get('/:id', function(req,res){
-  let id = req.params.id;
-  db.collection('details').findOne({"_id": ObjectId(req.params.id)}, function(err, profile) {
-    console.log("profile Found",profile)
-    res.json(profile)
-});
-
-})
-app.get('/ad/:id', function(req,res){
-  let id = req.params.id;
-  db.collection('ads').findOne({"_id": ObjectId(req.params.id)}, function(err, ad) {
-    console.log("ad Found",ad)
-    res.json(ad)
-});
-
-})
-
-app.get('/changeaccountsetting/:email', function(req,res){
-  console.log(req.params.email)
-  db.collection('details').findOne({"email": req.params.email}, function(err, details) {
-    console.log("user details Found",details)
-    res.json(details)
 });
 
 })
@@ -446,6 +496,7 @@ db.collection('details').findOne({"email": LUemail2}, function(err, creden) {
   db.collection('details').findOneAndUpdate(query,update)
 });
 }
+//
 app.post('/handlefriendbutton', function(req,res){
   console.log(req.body)
   
@@ -465,78 +516,29 @@ app.post('/handlefriendbutton', function(req,res){
   });
 
 })
-app.post('/updatesetting',upload, function (req, res) {
-  var updatedprofile = req.body;
-  console.log(req.files[0].filename)
-  console.log("UP for update i recieved in nodejs (Backend)", updatedprofile)
-  bcrypt.hash(updatedprofile.pass, saltRounds, async (err, hash) => {
-    const query = {"email": updatedprofile.email}
-    var data={
-      "firstname":updatedprofile.fname,
-      "lastname":updatedprofile.lname,
-      "email":updatedprofile.nemail,
-      "propic":req.files[0].filename,
-      "address":updatedprofile.address,
-      "password":hash,
-    }
-    const update = {
-      "$set": data
-    };
-    db.collection('details').findOneAndUpdate(query,update)
-    return res.send({
-      message: 'Profile updated Successfully'
-    });
-
-  
-  
-
-});
+app.get('/:id', function(req,res){
+  let id = req.params.id;
+  db.collection('details').findOne({"_id": ObjectId(req.params.id)}, function(err, profile) {
+    console.log("profile Found",profile)
+    res.json(profile)
 });
 
-
-app.post('/banuser', function(req,res){
-  console.log(req.body.useremail)
-  db.collection('details').findOne({"email": req.body.useremail}, function(err, creden) {
-    console.log("isbanned? ",creden.isbanned)
-    var newban=true
-    
-    const query = {"email": req.body.useremail}
-
-    const update = {
-      "$set": {
-        "isbanned": newban,
-        
-      }
-    };
-    db.collection('details').findOneAndUpdate(query,update)
-    return res.send({
-      success: true,
-      message: 'Congrats',
-      
-    });
-});
 })
-app.post('/unbanuser', function(req,res){
-  console.log("User email:",req.body.useremail)
-  db.collection('details').findOne({"email": req.body.useremail}, function(err, creden) {
-    console.log("isbanned? ",creden.isbanned)
-    var newban=false
-    
-    const query = {"email": req.body.useremail}
-
-    const update = {
-      "$set": {
-        "isbanned": newban,
-        
-      }
-    };
-    db.collection('details').findOneAndUpdate(query,update)
-    return res.send({
-      success: true,
-      message: 'Congrats',
-      
-    });
+app.post('/getuserIDName', function(req,res){
+  console.log(" profile email: ", req.body.email)
+  db.collection('details').findOne({"email": req.body.email}, function(err, profile) {
+    console.log("profile Found",profile)
+    res.json(profile)
 });
+
+})
+app.get('/changeaccountsetting/:email', function(req,res){
+  console.log(req.params.email)
+  db.collection('details').findOne({"email": req.params.email}, function(err, details) {
+    console.log("user details Found",details)
+    res.json(details)
+});
+
 })
 app.post('/sign-up',upload, function (req, res) {
   var countValue = req.body;
@@ -574,8 +576,93 @@ console.log("HashedPwd: ", hash)
 });
  
 });
+app.post('/sign-in', function (req, res) {
+  var countValue = req.body;
+  console.log("U are ", countValue.email);
+  
+db.collection('details').findOne({ email: countValue.email }, function(err, collection){
+  if(err){
+      console.log("Invalid User");
+      return res.send({
+        success: false,
+        message: 'User not exists'
+      });
+  }else{
+    
+    if (collection!=null){
+      console.log("User found");
+      
+      bcrypt.compare(countValue.pass, collection.password, function(err, resi) {
+        console.log(resi)
+        
+      if (resi === true){
+        console.log("Correct details found");
+        console.log(collection.firstname+ countValue.email+collection._id)
+        if(collection.isbanned){
+          return res.send({
+            success: false,
+            message: 'You are banned by Admin'
+          });
 
-  app.post('/adminsign-in', function (req, res) {
+        }
+        return res.send({
+          success: true,
+          message: 'Correct Details',
+          fname: collection.firstname,
+          lname: collection.lastname,
+          email: collection.email,
+          id: collection._id,
+          following: collection.following,
+          favs: collection.favs
+        });
+      }else{
+        return res.send({
+          success: false,
+          message: 'Error: Email and Pass Dont Match'
+        });
+       
+      }
+    });
+      
+    }else{
+      console.log("User not found");
+      return res.send({
+        success: false,
+        message: 'Error: Incorrect User, Recheck Your Email'
+      });
+    }
+  }
+   
+});
+})
+app.post('/updatesetting',upload, function (req, res) {
+  var updatedprofile = req.body;
+  console.log(req.files[0].filename)
+  console.log("UP for update i recieved in nodejs (Backend)", updatedprofile)
+  bcrypt.hash(updatedprofile.pass, saltRounds, async (err, hash) => {
+    const query = {"email": updatedprofile.email}
+    var data={
+      "firstname":updatedprofile.fname,
+      "lastname":updatedprofile.lname,
+      "email":updatedprofile.nemail,
+      "propic":req.files[0].filename,
+      "address":updatedprofile.address,
+      "password":hash,
+    }
+    const update = {
+      "$set": data
+    };
+    db.collection('details').findOneAndUpdate(query,update)
+    return res.send({
+      message: 'Profile updated Successfully'
+    });
+
+  
+  
+
+});
+});
+app.post('/adminsign-in', function (req, res) {
     var countValue = req.body;
     console.log("U are ", countValue);
     db.collection('admin').findOne({ id: countValue.id }, function(err, collection){
@@ -620,65 +707,11 @@ console.log("HashedPwd: ", hash)
     
   
   })
+*/
 
-app.post('/sign-in', function (req, res) {
-  var countValue = req.body;
-  console.log("U are ", countValue.email);
   
-db.collection('details').findOne({ email: countValue.email }, function(err, collection){
-  if(err){
-      console.log("Invalid User");
-      return res.send({
-        success: false,
-        message: 'User not exists'
-      });
-  }else{
-    
-    if (collection!=null){
-      console.log("User found");
-      
-      bcrypt.compare(countValue.pass, collection.password, function(err, resi) {
-        console.log(resi)
-        
-      if (resi === true){
-        console.log("Correct details found");
-        console.log(collection.firstname+ countValue.email+collection._id)
-        if(collection.isbanned){
-          return res.send({
-            success: false,
-            message: 'You are banned by Admin'
-          });
+//
 
-        }
-        return res.send({
-          success: true,
-          message: 'Correct Details',
-          fname: collection.firstname,
-          lname: collection.lastname,
-          id: collection._id,
-          following: collection.following,
-          favs: collection.favs
-        });
-      }else{
-        return res.send({
-          success: false,
-          message: 'Error: Email and Pass Dont Match'
-        });
-       
-      }
-    });
-      
-    }else{
-      console.log("User not found");
-      return res.send({
-        success: false,
-        message: 'Error: Incorrect User, Recheck Your Email'
-      });
-    }
-  }
-   
-});
-})
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })

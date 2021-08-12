@@ -26,6 +26,7 @@ function Savedads() {
                     })
                 })
                 setJobs(extracts)
+                console.log("Favorite Jobs To Be Displayed: ", extracts)
                 
                 
             })
@@ -66,7 +67,7 @@ function Savedads() {
             id:id
           })
           .then(function (response) {
-              console.log(response.data.message)
+              console.log("Response after deletion of saved ad",response.data)
               setJobs(jobs.filter(job => job._id !== id))
               value12.updatefavs(response.data.favs1)
               
@@ -92,7 +93,8 @@ function Savedads() {
             <h3 style={{borderLeft: '6px solid #1423A4', backgroundColor: '#E52D27', color: 'white'}}> {jobs.length}   Saved Ads</h3>
             {jobs.map(job=>(
                 
-                <div class="jumbotron jumbotron-fluid" style={{borderColor:"#0d3f67", border:"4px", borderStyle:"solid"}}>
+                <div class="jumbotron jumbotron-fluid" style={{borderColor:"#0d3f67", border:"4px", borderStyle:"solid", width:'40%', height:'40%',display:'inline-block', marginLeft:'5%'}}>
+                <img style={{/*position:"absolute", left:"1%", marginTop:"0%"*/display:'inline-block', marginTop:'-7%'}} width="100%" height="300px" src={'/content/'+job.adimg}  ></img>
                 <div class="container">
                 <Saveads2 removead={removead} handleEdit={handleEdit} handleDelete={handleDelete} job={job}/>
                     

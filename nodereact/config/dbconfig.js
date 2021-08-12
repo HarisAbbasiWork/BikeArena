@@ -1,5 +1,4 @@
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
+
 const mongoose = require('mongoose'); 
  
  mongoose.Promise = global.Promise;
@@ -26,4 +25,4 @@ const mongoose = require('mongoose');
   
  //});
  var db=mongoose.connection;
- export default db
+ module.exports=db

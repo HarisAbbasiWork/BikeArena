@@ -4,6 +4,7 @@
   "private": true,
   "proxy": "http://localhost:5000",
   "dependencies": {
+    "@chatscope/chat-ui-kit-react": "^1.8.1",
     "@fortawesome/fontawesome-svg-core": "^1.2.35",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
@@ -23,9 +24,13 @@
     "react-font": "^1.2.1",
     "react-mui-multiselect-dropdown": "^1.0.2",
     "react-player": "^2.9.0",
+    "react-rounded-image": "^2.0.13",
     "react-scripts": "3.4.3",
     "react-select": "^3.1.0",
+    "react-simple-chatbot": "^0.6.1",
+    "react-stripe-checkout": "^2.6.3",
     "reactjs-media": "^1.5.1",
+    "styled-components": "^5.3.0",
     "video-react": "^0.14.1",
     "webfontloader": "^1.6.28"
   },

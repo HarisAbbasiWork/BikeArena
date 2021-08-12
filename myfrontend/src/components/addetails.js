@@ -4,6 +4,8 @@ import axios from 'axios'
 import ProfileDetails from './ProfileDetails'
 import {UserContext} from './UserContext'
 import ReactPlayer from 'react-player'
+import Font, { Text } from 'react-font'
+import Carousel from 'react-bootstrap/Carousel'
 import './mycss.css'
 function Addetails() {
     let params = useParams();
@@ -13,6 +15,11 @@ function Addetails() {
     const [address, setAddress] = useState("")
     const [isaddetail, setIsaddetail] = useState(true)
     const value12 = useContext(UserContext);
+    const [index, setIndex] = useState(0);
+
+  const handleSelect = (selectedIndex, e) => {
+    setIndex(selectedIndex);
+  };
     let history = useHistory();
     const handleDelete=(id)=>{
         console.log("fuckkk",id)
@@ -94,6 +101,12 @@ function Addetails() {
         
         
     }
+    const images = [
+        {
+          original: 'https://picsum.photos/id/1018/1000/600/',
+          thumbnail: 'https://picsum.photos/id/1018/250/150/',
+        }
+      ];
     return (
         <div>
             <div class="jumbotron jumbotron-fluid">
@@ -124,7 +137,57 @@ function Addetails() {
                     height='400px'
                     controls={true}
                     />
+                    
                 </div>:null}
+                <div style={{borderColor:"#0d3f67", border:"4px", borderStyle:"solid", marginTop:'2%'}}>
+            <Carousel style={{height:"30%", width:"60%", marginLeft:"20%"}} activeIndex={index} onSelect={handleSelect}>
+      {ad.adimg?<Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={'/content/'+ad.adimg}
+          alt="First slide"
+          style={{height:"400px", width:"800px"}}
+        />
+        <Carousel.Caption>
+        </Carousel.Caption>
+      </Carousel.Item>:null}
+      {ad.adimg2?<Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={'/content/'+ad.adimg2}
+          alt="Second slide"
+          style={{height:"400px", width:"800px"}}
+        />
+
+        <Carousel.Caption>
+        </Carousel.Caption>
+      </Carousel.Item>:null}
+      {ad.adimg3?<Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={'/content/'+ad.adimg3}
+          alt="Third slide"
+          style={{height:"400px", width:"800px"}}
+        />
+
+        <Carousel.Caption>
+          
+        </Carousel.Caption>
+      </Carousel.Item>:null}
+      {ad.adimg4?<Carousel.Item>
+        <img
+          className="d-block w-100"
+          src={'/content/'+ad.adimg4}
+          alt="Third slide"
+          style={{height:"400px", width:"800px"}}
+        />
+
+        <Carousel.Caption>
+          
+        </Carousel.Caption>
+      </Carousel.Item>:null}
+    </Carousel>
+    </div>
                     
                     
                     

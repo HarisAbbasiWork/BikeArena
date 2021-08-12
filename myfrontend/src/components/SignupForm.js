@@ -1,6 +1,6 @@
 import React, {useState,useEffect, useMemo} from 'react'
 import axios from 'axios'
-
+import {ProgressBar } from "react-bootstrap"
 function SignupForm() {
     const [email, setEmail] = useState("")
     const [pass, setPass] = useState("")
@@ -8,7 +8,7 @@ function SignupForm() {
     const [lname, setLname] = useState("")
     const [address, setAddress] = useState("")
     const [error, setError] = useState(null);
-    
+    const [progress, setProgress] = useState()
     const [selectedfile, setSelectedfile] = useState("")
     const [success, setSuccess] = useState(null);
     function validateEmail(email) 
@@ -42,7 +42,11 @@ function SignupForm() {
             if(validateEmail(email)){
                 console.log(email+ ": Email true")
                 const URL = "http://localhost:5000/sign-up";
-                axios.post(URL,data)
+                axios.post(URL,data,{
+                    onUploadProgress: progressEvent  => {
+                        //Set the progress value to show the progress bar
+                        setProgress(Math.round((100 * progressEvent.loaded) / progressEvent.total))
+                      }})
                 .then((response) => {
                     console.log("Response is ",response.data.message)
                     if(response.data.auth){
@@ -122,6 +126,7 @@ function SignupForm() {
             </form>
             {error? <div class="alert alert-danger" role="alert">{error}</div> : null}
             {success? <div class="alert alert-success" role="alert">{success}</div> : null}
+            {progress && <ProgressBar now={progress} label={`${progress}%`} />}
         </div>
     )
 }

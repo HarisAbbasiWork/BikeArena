@@ -4,6 +4,7 @@ import axios from 'axios'
 import { pk } from "./pk.js";
 import {UserContext} from './UserContext'
 import { brands } from "./brands.js";
+import { cities } from "./cities.js";
 import { years } from "./years.js";
 import './mycss.css'
 import { BikeParts } from "./BikeParts.js";
@@ -21,6 +22,7 @@ function EditJob() {
     const [Category, setCategory] = useState("")
     const [selectedfile, setSelectedfile] = useState("")
     const [success, setSuccess] = useState(null);
+    const [selectedOption2, setSelectedOption2] = useState(null);
     const [selectedfile2, setSelectedfile2] = useState("")
     let history = useHistory();
     
@@ -39,6 +41,7 @@ function EditJob() {
                 setCondition(response.data.condition)
                 setAddescription(response.data.addescription)
                 setAdtitle(response.data.adtitle)
+                setSelectedOption2(response.data.city)
             })
             .catch(function (error){
                 console.log(error);
@@ -75,6 +78,9 @@ function EditJob() {
     }
     const handleChange2=(e) =>{
         setBrand(e.target.value)
+    }
+    const handleCities=(e) =>{
+        setSelectedOption2(e.target.value)
     }
     const handleChange3=(e) =>{
         setBikePart(e.target.value)
@@ -139,10 +145,17 @@ function EditJob() {
                     <label style={{color:'black', fontSize: 22, fontWeight: 'bold', paddingRight: '5px'}}>Price</label>
                     <input type="text" value={price} onChange={(e)=>{setPrice(e.target.value)}} className="form-control" placeholder="i.e 30,000" />
             </div>
+            <div className="form-group">
+                    <label style={{color:'black', fontSize: 22, fontWeight: 'bold', paddingRight: '5px'}}>Location</label>
+                    <select name="Cities" value={selectedOption2} onChange={handleCities}>
+                        {cities.map(city=> <option value={city}>{city}</option>)}
+                    </select>
+            </div>
             <div class="form-group">
                 <label style={{color:'black', fontSize: 22, fontWeight: 'bold'}}>Ad Description</label>
                 <textarea value={addescription} onChange={(e)=>{setAddescription(e.target.value)}} class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
             </div>
+
             <label style={{color:'black', fontSize: 22, fontWeight: 'bold', paddingRight: '5px'}}>*Upload Image</label>
             <input type="file" name="file" onChange={onIMGChangeHandler}/>
             <br></br>
